@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}readers{% endblock %}
+
+{% block content %}
+<div class="container py-5 readers-page">
+<h2 class="mb-5">Readers</h2>
+
+<form method="POST" action="{{url_for('reader.add')}}">
+    <div class="mb-3">
+        <label for="reader_name" class="form-label">Reader Name</label>
+        <input
+        type="text" id="reader_name" name="reader_name"
+        class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label for="phone_number" class="form-label">Phone Number</label>
+        <input
+        type="tel" id="phone_number" name="phone_number"
+        class="form-control" required>
+    </div>
+    <button type="submit" class="btn btn-danger w-100">
+        Add Reader
+    </button>
+</form>
+
+<div class="readers-table">
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Reader ID</th>
+                <th>Reader Name</th>
+                <th>Phone Number</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            {% for reader in readers.items %}
+            <tr>
+                <td>{{reader.id}}</td>
+                <td>{{reader.reader_name}}</td>
+                <td>{{reader.phone_number}}</td>
+                <td>
+                    <form method="POST" action="{{url_for('reader.delete',reader_id=reader.id)}}">
+                    <button type="submit" class="btn btn-danger btn-sm py-0">
+                        Delete
+                    </button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <nav>
+    <ul class="pagination justify-content-center">
+
+        {% if readers.has_prev %}
+        <li class="page-item">
+            <a class="page-link"
+               href="{{ url_for('reader.add', page=readers.prev_num) }}">
+                Previous
+            </a>
+        </li>
+        {% endif %}
+
+        {% for page_num in readers.iter_pages() %}
+            {% if page_num %}
+            <li class="page-item {% if page_num == readers.page %}active{% endif %}">
+                <a class="page-link"
+                   href="{{ url_for('reader.add', page=page_num) }}">
+                    {{ page_num }}
+                </a>
+            </li>
+            {% endif %}
+        {% endfor %}
+
+        {% if readers.has_next %}
+        <li class="page-item">
+            <a class="page-link"
+               href="{{ url_for('reader.add', page=readers.next_num) }}">
+                Next
+            </a>
+        </li>
+        {% endif %}
+
+    </ul>
+</nav>
+</div>
+<div class="mt-4">
+    <a href="{{ url_for('dash.dashboard') }}" class="btn btn-secondary w-100">
+        Back to Dashboard
+    </a>
+</div>
+</div>
+{% endblock %}

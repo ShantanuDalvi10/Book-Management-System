@@ -1,0 +1,131 @@
+
+{% extends "base.html" %}
+
+{% block title %}Assign Books{% endblock %}
+
+{% block content %}
+<div class="container py-5 assignments-page">
+<h2 class="mb-5">Assign Books</h2>
+<form method="POST" action="{{url_for('assign.assign_book_route')}}">
+<div class="mb-3">
+    <label for="reader" class="form-label">
+        Reader
+    </label>
+
+    <select
+        id="reader"
+        name="reader"
+        class="form-select"
+        required>
+        <option value="">Select Reader</option>
+        {% for reader in readers %}
+        <option value="{{reader.id}}">{{reader.reader_name}}</option>
+        {% endfor %}
+
+
+    </select>
+</div>
+<div class="mb-3">
+    <label for="book" class="form-label">
+        Book
+    </label>
+
+    <select
+        id="book"
+        name="book"
+        class="form-select"
+        required>
+
+        <option value="">Select Book</option>
+        {% for book in books %}
+        <option value="{{book.id}}">{{book.book_name}}</option>
+        {% endfor %}
+
+    </select>
+    
+</div>
+<button type="submit" class="btn btn-danger w-100">
+        Assign Book 
+    </button>
+</form>
+
+<div class="assignment-table">
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+
+                <th>Assignment ID</th>
+                <th>Reader</th>
+                <th>Book</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for assignment in assignments.items %}
+            <tr>
+
+                <td>{{assignment.id}}</td>
+                <td>{{assignment.reader.reader_name}}</td>
+                <td>{{assignment.book.book_name}}</td>
+                <td>
+                    <form method="POST" action="{{url_for('assign.return_book_route',assignment_id=assignment.id)}}">
+                    <button type="submit" class="btn btn-danger btn-sm">
+                        Return
+                    </button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+        <tr>
+        <td colspan="4" class="text-center">
+            No assignments found
+        </td>
+        </tr>
+        {% endfor %}
+
+
+
+        </tbody>
+    </table>
+    <nav>
+    <ul class="pagination justify-content-center">
+
+        {% if assignments.has_prev %}
+        <li class="page-item">
+            <a class="page-link"
+               href="{{ url_for('assign.assignments_page', page=assignments.prev_num) }}">
+                Previous
+            </a>
+        </li>
+        {% endif %}
+
+        {% for page_num in assignments.iter_pages() %}
+            {% if page_num %}
+            <li class="page-item {% if page_num == assignments.page %}active{% endif %}">
+                <a class="page-link"
+                   href="{{ url_for('assign.assignments_page', page=page_num) }}">
+                    {{ page_num }}
+                </a>
+            </li>
+            {% endif %}
+        {% endfor %}
+
+        {% if assignments.has_next %}
+        <li class="page-item">
+            <a class="page-link"
+               href="{{ url_for('assign.assignments_page', page=assignments.next_num) }}">
+                Next
+            </a>
+        </li>
+        {% endif %}
+
+    </ul>
+</nav>
+</div>
+    <div class="mt-4">
+        <a href="{{ url_for('dash.dashboard') }}" class="btn btn-secondary w-100">
+        Back to Dashboard
+    </a>
+</div>
+</div>
+{% endblock %}
